@@ -1,0 +1,12 @@
+^renv$
+^renv\.lock$
+^dev$
+.vscode/
+.Rproj.user/
+.DS_Store
+.Rhistory
+.RData
+data/
+sandbox/
+_targets/
+^LICENSE\.md$
