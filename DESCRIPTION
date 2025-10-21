@@ -1,6 +1,6 @@
 Package: DHSHarmonization
 Title: DHS Harmonization Pipeline
-Version: 0.0.0.9000
+Version: 0.0.0.9001
 Authors@R: c(
     person("Tinashe", "Tapera", , "ttapera@hsph.harvard.edu", role = c("aut", "cre")),
     person("Christopher", "Golden", , "golden@hsph.harvard.edu", role = "cph")
