@@ -1,16 +1,35 @@
 Package: DHSHarmonization
-Version: 0.0.0.9000
 Title: DHS Harmonization Pipeline
-Description: This package documents the pipeline used to merge and harmonize the DHS data for the lab.
-Authors@R: c(person(given = "Tinashe",
-         family = "Tapera",
-         role = c("aut", "cre"),
-         email = "ttapera@hsph.harvard.edu"),
-  person(given = "Christopher",
-         family = "Golden",
-         role = "cph",
-         email = "golden@hsph.harvard.edu"))
+Version: 0.0.0.9000
+Authors@R: c(
+    person("Tinashe", "Tapera", , "ttapera@hsph.harvard.edu", role = c("aut", "cre")),
+    person("Christopher", "Golden", , "golden@hsph.harvard.edu", role = "cph")
+  )
+Description: This package documents the pipeline used to merge and
+    harmonize the DHS data for the lab.
 License: MIT + file LICENSE
+Imports: 
+    config,
+    dplyr,
+    here,
+    magrittr,
+    purrr,
+    rdhs,
+    readr,
+    zip
+Suggests: 
+    DT,
+    glue,
+    knitr,
+    rmarkdown,
+    sf,
+    skimr,
+    targets,
+    testthat,
+    tidyverse
+VignetteBuilder: 
+    knitr
+Config/fusen/version: 0.7.2
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3

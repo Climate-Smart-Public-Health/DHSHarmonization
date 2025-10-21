@@ -1,0 +1,314 @@
+---
+title: "flat_linking_inputs.Rmd empty"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r development, include=FALSE}
+library(testthat)
+```
+
+```{r development-load}
+# Load already included functions if relevant
+pkgload::load_all(export_all = FALSE)
+library(here)
+library(tibble)
+library(DT)
+```
+
+# link_inputs
+
+```{r development-link_inputs}
+# Prepare the code of your function here
+```
+
+```{r function-link_inputs}
+#' Symlink Google Drive Data Space to Local Data Directory
+#'
+#' This function creates a symbolic link from a Google Drive data space (specified in a config file)
+#' to a local "data" directory. It checks for the existence of the Google Drive path and the local
+#' data directory, creates the local directory if it does not exist, and then creates the symlink.
+#'
+#' @param cfg_path Character. Path to the configuration file containing the Google Drive data space path.
+#'
+#' @return Logical. Returns TRUE if the linking is successful; otherwise, stops with an error.
+#'
+#' @examples
+#' \dontrun{
+#' link_inputs("config.yml")
+#' }
+#' 
+#' @export
+link_inputs <- function(cfg_path) {
+
+  cfg <- config::get(file = cfg_path)
+  gdrive_path <- cfg$gdrive_path
+  if (is.null(gdrive_path)) {
+    stop("Please provide the path to the google drive data space in the config file")
+  }
+  if (!dir.exists(gdrive_path)) {
+    stop(paste0("The provided gdrive_path does not exist: ", gdrive_path))
+  }
+
+  local_data_dir <- here::here("data")
+  if (!dir.exists(local_data_dir)) {
+    dir.create(local_data_dir)
+  }
+  
+  message(paste0("Linking the google drive data space to the local Data directory: ", gdrive_path))
+  file.symlink(gdrive_path, local_data_dir)
+
+  if (dir.exists(file.path(local_data_dir, basename(gdrive_path)))) {
+    message("Linking successful!")
+    return(TRUE)
+  } else {
+    stop("Linking failed!")
+  }  
+}
+```
+
+```{r examples-link_inputs}
+link_inputs("config.yml")
+```
+
+```{r tests-link_inputs}
+test_that("link_inputs works", {
+  expect_true(inherits(link_inputs, "function"))
+})
+```
+
+
+# list_raw_gps_dhs
+    
+```{r development-list_raw_gps_dhs}
+# You can prepare the code of the list_raw_gps() function here
+```
+  
+```{r function-list_raw_gps_dhs}
+#' Title
+#' 
+#' Description
+#' 
+#' 
+#' @return
+#' 
+#' @importFrom here here
+#' @export
+list_raw_gps_dhs <- function(){
+    
+    c(
+      here("data", "DHS Data", "DHS 1997", "GPS Data", "MDGE32FL", "MDGE32FL.shp"),
+      here("data", "DHS Data", "DHS 2008 geospatial", "MDGE53FL", "MDGE53FL.shp"),
+      here("data", "DHS Data", "DHS 2008-09", "GPS Data", "MDGE53FL", "MDGE53FL.shp"),
+      here("data", "DHS Data", "DHS 2021", "GPS data", "MDGE81FL", "MDGE81FL.shp"),
+      here("data", "DHS Data", "MIS 2011", "GPS Data", "MDGE61FL", "MDGE61FL.shp"),
+      here("data", "DHS Data", "MIS 2013", "GPS Data", "MDGE6AFL", "MDGE6AFL.shp"),
+      here("data", "DHS Data", "MIS 2016", "GPS Data", "MDGE71FL", "MDGE71FL.shp")
+    )
+}
+```
+  
+```{r example-list_raw_gps}
+list_raw_gps_dhs()
+```
+  
+```{r tests-list_raw_gps_dhs}
+test_that("list_raw_gps_dhs works", {
+  expect_true(inherits(list_raw_gps_dhs, "function")) 
+})
+```
+  
+# list_raw_flat_dhs
+    
+```{r development-list_raw_flat_dhs}
+# You can prepare the code of the list_raw_flat_dhs() function here
+```
+  
+```{r function-list_raw_flat_dhs}
+#' Title
+#' 
+#' Description
+#' 
+#' @return
+#' 
+#' @export
+list_raw_flat_dhs <- function(){
+    
+    c(
+      # 92
+      here("data", "DHS Data", "DHS 1992", "MDBR21FL"),
+      here("data", "DHS Data", "DHS 1992", "MDHR21FL"),
+      here("data", "DHS Data", "DHS 1992", "MDHW21FL"),
+      here("data", "DHS Data", "DHS 1992", "MDIR21FL"),
+      here("data", "DHS Data", "DHS 1992", "MDKR21FL"),
+      here("data", "DHS Data", "DHS 1992", "MDPR21FL"),
+      here("data", "DHS Data", "DHS 1992", "MDSQ21FL"),
+      # 97
+      here("data", "DHS Data", "DHS 1997", "MDBR31FL"),
+      here("data", "DHS Data", "DHS 1997", "MDHR31FL"),
+      here("data", "DHS Data", "DHS 1997", "MDHW31FL"),
+      here("data", "DHS Data", "DHS 1997", "MDIR31FL"),
+      here("data", "DHS Data", "DHS 1997", "MDKR31FL"),
+      here("data", "DHS Data", "DHS 1997", "MDPR31FL"),
+      here("data", "DHS Data", "DHS 1997", "MDWI31FL"),
+      # 03-04
+      here("data", "DHS Data", "DHS 2003-04", "MDBR42FL"),
+      here("data", "DHS Data", "DHS 2003-04", "MDCR42FL"),
+      here("data", "DHS Data", "DHS 2003-04", "MDHR42FL"),
+      here("data", "DHS Data", "DHS 2003-04", "MDHW41FL"),
+      here("data", "DHS Data", "DHS 2003-04", "MDIR42FL"),
+      here("data", "DHS Data", "DHS 2003-04", "MDKR42FL"),
+      here("data", "DHS Data", "DHS 2003-04", "MDMR42FL"),
+      here("data", "DHS Data", "DHS 2003-04", "MDPR42FL"),
+      # 08
+      #here("data", "DHS Data", "DHS 2008 geospatial", "MDHR51DT"), # this may fail
+      here("data", "DHS Data", "DHS 2008-09", "MDBR51FL"),
+      here("data", "DHS Data", "DHS 2008-09", "MDCR51FL"),
+      here("data", "DHS Data", "DHS 2008-09", "MDHR51FL"),
+      here("data", "DHS Data", "DHS 2008-09", "MDIR51FL"),
+      here("data", "DHS Data", "DHS 2008-09", "MDKR51FL"),
+      here("data", "DHS Data", "DHS 2008-09", "MDMR51FL"),
+      here("data", "DHS Data", "DHS 2008-09", "MDPR51FL"),
+      # 21
+      here("data", "DHS Data", "DHS 2021", "MDBR80FL"),
+      here("data", "DHS Data", "DHS 2021", "MDCR80FL"),
+      here("data", "DHS Data", "DHS 2021", "MDFW81FL"),
+      here("data", "DHS Data", "DHS 2021", "MDHR80FL"),
+      here("data", "DHS Data", "DHS 2021", "MDIR80FL"),
+      here("data", "DHS Data", "DHS 2021", "MDKR80FL"),
+      here("data", "DHS Data", "DHS 2021", "MDMR80FL"),
+      here("data", "DHS Data", "DHS 2021", "MDPR80FL")
+    )
+}
+```
+  
+```{r example-list_raw_flat_dhs}
+list_raw_flat_dhs()
+```
+  
+```{r tests-list_raw_flat_dhs}
+test_that("list_raw_flat_dhs works", {
+  expect_true(inherits(list_raw_flat_dhs, "function")) 
+})
+```
+
+The summary of current DHS survey files we have is as follows:
+
+```{r}
+library(DT)
+
+survey_summary <- data.frame(
+  Year       = c("1992", "1997", "2003-04", "2008-09", "2021"),
+  BR         = c(1, 1, 1, 1, 1),
+  HW         = c(1, 1, 1, 0, 0),
+  CR         = c(0, 0, 1, 1, 1),
+  HR         = c(1, 1, 1, 1, 1),
+  IR         = c(1, 1, 1, 1, 1),
+  KR         = c(1, 1, 1, 1, 1),
+  PR         = c(1, 1, 1, 1, 1),
+  WI         = c(0, 1, 0, 0, 0),
+  SQ         = c(1, 0, 0, 0, 0),
+  MR         = c(0, 0, 1, 1, 1),
+  FW         = c(0, 0, 0, 0, 1),
+  stringsAsFactors = FALSE
+)
+
+datatable(survey_summary)
+```
+
+# list_raw_gps_covars
+
+This catalogs and fetches the paths to the covariate files
+    
+```{r development-list_raw_gps_covars}
+# You can prepare the code of the list_raw_gps_covars() function here
+```
+  
+```{r function-list_raw_gps_covars}
+#' Title
+#' 
+#' Description
+#' 
+#' @return
+#' @importFrom purrr map_chr
+#' @importFrom here here
+#' @export
+list_raw_gps_covars <- function(){
+    
+    c(
+      here("data", "DHS Data", "DHS 1997", "GPS Data", "MDGC32FL"),
+      here("data", "DHS Data", "DHS 2008 geospatial", "MDGC52FL"),
+      here("data", "DHS Data", "DHS 2008-09", "GPS Data", "MDGC52FL"),
+      here("data", "DHS Data", "DHS 2021", "GPS data", "MDGC81FL"),
+      here("data", "DHS Data", "MIS 2011", "GPS Data", "MDGC62FL"),
+      here("data", "DHS Data", "MIS 2013", "GPS Data", "MDGC6BFL"),
+      here("data", "DHS Data", "MIS 2016", "GPS Data", "MDGC72FL")
+    ) %>%
+      list.files(pattern = "*.csv", full.names = TRUE, recursive = TRUE)
+}
+```
+  
+```{r example-list_raw_gps_covars}
+list_raw_gps_covars()
+```
+  
+```{r tests-list_raw_gps_covars}
+test_that("list_raw_gps_covars works", {
+  expect_true(inherits(list_raw_gps_covars, "function")) 
+})
+```
+
+# list_raw_flat_mis
+    
+```{r development-list_raw_flat_mis}
+# You can prepare the code of the list_raw_flat_mis() function here
+```
+  
+```{r function-list_raw_flat_mis}
+#' Title
+#' 
+#' Description
+#' 
+#' @return
+#' 
+#' @export
+list_raw_flat_mis <- function(){
+    
+    c(
+      # 2011
+      here("data", "DHS Data", "MIS 2011", "MDHR61FL"),
+      here("data", "DHS Data", "MIS 2011", "MDIR61FL"),
+      here("data", "DHS Data", "MIS 2011", "MDKR61FL"),
+      here("data", "DHS Data", "MIS 2011", "MDPR61FL"),
+      # 2013
+      here("data", "DHS Data", "MIS 2013", "MDHR6AFL"),
+      here("data", "DHS Data", "MIS 2013", "MDIR6AFL"),
+      here("data", "DHS Data", "MIS 2013", "MDKR6AFL"),
+      here("data", "DHS Data", "MIS 2013", "MDPR6AFL"),
+      # 2016
+      here("data", "DHS Data", "MIS 2016", "MDHR71FL"),
+      here("data", "DHS Data", "MIS 2016", "MDIR71FL"),
+      here("data", "DHS Data", "MIS 2016", "MDKR71FL"),
+      here("data", "DHS Data", "MIS 2016", "MDPR71FL")
+    )
+}
+```
+  
+```{r example-list_raw_flat_mis}
+list_raw_flat_mis()
+```
+  
+```{r tests-list_raw_flat_mis}
+test_that("list_raw_flat_mis works", {
+  expect_true(inherits(list_raw_flat_mis, "function")) 
+})
+```
+  
+
+```{r development-inflate, eval=FALSE}
+# Run but keep eval=FALSE to avoid infinite loop
+# Execute in the console directly
+fusen::inflate(flat_file = "dev/flat_linking_inputs.Rmd", vignette_name = "Linking and Tracking Raw Inputs", open_vignette = FALSE, check = FALSE)
+```
+

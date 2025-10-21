@@ -16,15 +16,16 @@ All commands that you use to use when developing packages...
 fusen::fill_description(
   pkg = here::here(),
   fields = list(
-    Title = "Build A Package From Rmarkdown File",
-    Description = "Use Rmarkdown First method to build your package. Start your package with documentation. Everything can be set from a Rmarkdown file in your project.",
+    Title = "DHS Harmonization Pipeline",
+    Description = "This package documents the pipeline used to merge and harmonize the DHS data for the lab.",
     `Authors@R` = c(
-      person("John", "Doe", email = "john@email.me", role = c("aut", "cre"), comment = c(ORCID = "0000-0000-0000-0000"))
+      person("Tinashe", "Tapera", email = "ttapera@hsph.harvard.edu", role = c("aut", "cre")),
+      person("Christopher", "Golden", email = "golden@hsph.harvard.edu", role = c("cph"))
     )
   )
 )
 # Define License with use_*_license()
-usethis::use_mit_license("John Doe")
+usethis::use_mit_license("Tinashe Michael Tapera")
 ```
 
 # All-in-one function to deploy publicly on GitHub
@@ -56,7 +57,7 @@ remotes::install_local()
 # README
 usethis::use_readme_rmd()
 # Code of Conduct
-usethis::use_code_of_conduct("contact@fake.com")
+usethis::use_code_of_conduct("ttapera@hsph.harvard.edu")
 # NEWS
 usethis::use_news_md()
 ```
