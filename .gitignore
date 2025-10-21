@@ -4,7 +4,6 @@
 .DS_Store
 .httr-oauth
 .quarto
-docs
 inst/doc
 data/
 sandbox/

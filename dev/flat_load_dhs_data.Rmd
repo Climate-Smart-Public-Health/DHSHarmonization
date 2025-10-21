@@ -415,6 +415,7 @@ DT::datatable(var_descriptions_sq, caption = glue("Variable Descriptions for Sup
 
 ## load_gps_dhs_data
 
+#TODO what is the relatinoship between our healthsheds and the survey locations
 Reading in the geospatial data is a little bit different:
 
 ```{r}

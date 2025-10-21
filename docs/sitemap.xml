@@ -1,0 +1,24 @@
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>/404.html</loc></url>
+<url><loc>/CODE_OF_CONDUCT.html</loc></url>
+<url><loc>/LICENSE-text.html</loc></url>
+<url><loc>/LICENSE.html</loc></url>
+<url><loc>/articles/index.html</loc></url>
+<url><loc>/articles/linking-and-tracking-raw-inputs.html</loc></url>
+<url><loc>/articles/reading-in-files-from-dhs.html</loc></url>
+<url><loc>/authors.html</loc></url>
+<url><loc>/index.html</loc></url>
+<url><loc>/news/index.html</loc></url>
+<url><loc>/reference/DHSHarmonization-package.html</loc></url>
+<url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/link_inputs.html</loc></url>
+<url><loc>/reference/list_raw_flat_dhs.html</loc></url>
+<url><loc>/reference/list_raw_flat_mis.html</loc></url>
+<url><loc>/reference/list_raw_gps_covars.html</loc></url>
+<url><loc>/reference/list_raw_gps_dhs.html</loc></url>
+<url><loc>/reference/load_flat_dhs_data.html</loc></url>
+<url><loc>/reference/load_gps_covars.html</loc></url>
+<url><loc>/reference/pipe.html</loc></url>
+<url><loc>/reference/summarize_dhs_flat_dictionary.html</loc></url>
+</urlset>
+
