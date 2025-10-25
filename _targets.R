@@ -73,15 +73,6 @@ list(
     error = "stop"
     # format = "qs" # Efficient storage for general data objects.
   ),
-  # list raw data files
-  tar_target(
-    name = raw_gps_dhs_files,
-    command = {
-      if(!raw_data_ready) stop("raw_data_ready is FALSE, cannot proceed")
-      list_raw_gps_dhs()
-    },
-    format = "file"
-  ),
   tar_target(
     name = raw_flat_dhs_files,
     command = {
@@ -113,39 +104,24 @@ list(
       iteration = "list"   # files_for_type is a character vector; pass as list
     )
   ),
-  # tar_target(
-  #   name = raw_flat_dhs_files_BR, # birth recode
-  #   command = {
-  #       if(!raw_data_ready) stop("raw_data_ready is FALSE, cannot proceed")
-  #       raw_flat_dhs_files %>%
-  #         str_subset("BR")
-  #     }
-  # ),
-  # tar_target(
-  #   name = raw_flat_dhs_files_CR, # child recode
-  #   command = {
-  #       if(!raw_data_ready) stop("raw_data_ready is FALSE, cannot proceed")
-  #       raw_flat_dhs_files %>%
-  #         str_subset("CR")
-  #     }
-  # ),
-  # read into a branch for each survey type
-  # tar_target(
-  #   dhs_data_BR,
-  #   command = {
-  #     load_flat_dhs_data(raw_flat_dhs_files_BR)
-  #   },
-  #   pattern = map(raw_flat_dhs_files_BR),
-  #   iteration = "list"
-  # ),
-  # tar_target(
-  #   dhs_data_CR,
-  #   command = {
-  #     load_flat_dhs_data(raw_flat_dhs_files_CR)
-  #   },
-  #   pattern = map(raw_flat_dhs_files_CR),
-  #   iteration = "list"
-  # ),
+
+  tar_target(
+    raw_gps_dhs_files,
+    {
+      if(!raw_data_ready) stop("raw_data_ready is FALSE, cannot proceed")
+      list_raw_gps_dhs()
+    },
+    format = "file"
+  ),
+
+  tar_target(
+    gps_data_file,
+    {
+      st_read(raw_gps_dhs_files)
+    },
+    pattern = map(raw_gps_dhs_files),
+    iteration = "list"
+  ),
   tar_target(
     name = raw_gps_covar_files,
     command = {
