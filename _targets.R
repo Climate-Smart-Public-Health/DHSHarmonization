@@ -20,6 +20,7 @@ tar_option_set(
     "purrr",
     "rdhs",
     "stringr",
+    "sf",
     "DHSHarmonization"
   ) 
   # format = "qs", # Optionally set the default storage format. qs is fast.
@@ -73,12 +74,25 @@ list(
     error = "stop"
     # format = "qs" # Efficient storage for general data objects.
   ),
+  # 2) Acknowledge file groups (return character vectors; DO NOT use format="file")
   tar_target(
-    name = raw_flat_dhs_files,
-    command = {
-      if(!raw_data_ready) stop("raw_data_ready is FALSE, cannot proceed")
-      list_raw_flat_dhs()
-    },
+    raw_flat_dhs_files,
+    { if (!raw_data_ready) stop("raw_data_ready is FALSE"); list_raw_flat_dhs() },
+    format = "file"
+  ),
+  tar_target(
+    raw_gps_dhs_files,
+    { if (!raw_data_ready) stop("raw_data_ready is FALSE"); list_raw_gps_dhs() },
+    format = "file"
+  ),
+  tar_target(
+    raw_gps_covar_files,
+    { if (!raw_data_ready) stop("raw_data_ready is FALSE"); list_raw_gps_covars() },
+    format = "file"
+  ),
+  tar_target(
+    raw_flat_mis_files,
+    { if (!raw_data_ready) stop("raw_data_ready is FALSE"); list_raw_flat_mis() },
     format = "file"
   ),
   # 2) For each recode type, create its own pair of targets
@@ -104,39 +118,13 @@ list(
       iteration = "list"   # files_for_type is a character vector; pass as list
     )
   ),
-
   tar_target(
-    raw_gps_dhs_files,
-    {
-      if(!raw_data_ready) stop("raw_data_ready is FALSE, cannot proceed")
-      list_raw_gps_dhs()
-    },
-    format = "file"
-  ),
-
-  tar_target(
-    gps_data_file,
+    gps_data,
     {
       st_read(raw_gps_dhs_files)
     },
     pattern = map(raw_gps_dhs_files),
     iteration = "list"
-  ),
-  tar_target(
-    name = raw_gps_covar_files,
-    command = {
-      raw_data_ready
-      list_raw_gps_covars()
-    },
-    format = "file"
-  ),
-  tar_target(
-    name = raw_flat_mis_files,
-    command = {
-      raw_data_ready
-      list_raw_flat_mis()
-    },
-    format = "file"
   )
 
 )
