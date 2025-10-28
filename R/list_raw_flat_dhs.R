@@ -2,58 +2,18 @@
 
 #' Title
 #' 
-#' Description
+#' Ingest the list of files in the project and return those that are flat DHS recode files
 #' 
-#' @return
-#' 
+#' @param file_list Character vector of file paths to check.
+#' @return Character vector of flat DHS recode file paths.
 #' @export
 #' @examples
-#' list_raw_flat_dhs()
-list_raw_flat_dhs <- function(){
+#' link_inputs("config.yml") %>%
+#'   list_raw_flat_dhs()
+list_raw_flat_dhs <- function(file_list){
     
-    c(
-      # 92
-      here("data", "DHS Data", "DHS 1992", "MDBR21FL"),
-      here("data", "DHS Data", "DHS 1992", "MDHR21FL"),
-      here("data", "DHS Data", "DHS 1992", "MDHW21FL"),
-      here("data", "DHS Data", "DHS 1992", "MDIR21FL"),
-      here("data", "DHS Data", "DHS 1992", "MDKR21FL"),
-      here("data", "DHS Data", "DHS 1992", "MDPR21FL"),
-      here("data", "DHS Data", "DHS 1992", "MDSQ21FL"),
-      # 97
-      here("data", "DHS Data", "DHS 1997", "MDBR31FL"),
-      here("data", "DHS Data", "DHS 1997", "MDHR31FL"),
-      here("data", "DHS Data", "DHS 1997", "MDHW31FL"),
-      here("data", "DHS Data", "DHS 1997", "MDIR31FL"),
-      here("data", "DHS Data", "DHS 1997", "MDKR31FL"),
-      here("data", "DHS Data", "DHS 1997", "MDPR31FL"),
-      here("data", "DHS Data", "DHS 1997", "MDWI31FL"),
-      # 03-04
-      here("data", "DHS Data", "DHS 2003-04", "MDBR42FL"),
-      here("data", "DHS Data", "DHS 2003-04", "MDCR42FL"),
-      here("data", "DHS Data", "DHS 2003-04", "MDHR42FL"),
-      here("data", "DHS Data", "DHS 2003-04", "MDHW41FL"),
-      here("data", "DHS Data", "DHS 2003-04", "MDIR42FL"),
-      here("data", "DHS Data", "DHS 2003-04", "MDKR42FL"),
-      here("data", "DHS Data", "DHS 2003-04", "MDMR42FL"),
-      here("data", "DHS Data", "DHS 2003-04", "MDPR42FL"),
-      # 08
-      #here("data", "DHS Data", "DHS 2008 geospatial", "MDHR51DT"), # this may fail
-      here("data", "DHS Data", "DHS 2008-09", "MDBR51FL"),
-      here("data", "DHS Data", "DHS 2008-09", "MDCR51FL"),
-      here("data", "DHS Data", "DHS 2008-09", "MDHR51FL"),
-      here("data", "DHS Data", "DHS 2008-09", "MDIR51FL"),
-      here("data", "DHS Data", "DHS 2008-09", "MDKR51FL"),
-      here("data", "DHS Data", "DHS 2008-09", "MDMR51FL"),
-      here("data", "DHS Data", "DHS 2008-09", "MDPR51FL"),
-      # 21
-      here("data", "DHS Data", "DHS 2021", "MDBR80FL"),
-      here("data", "DHS Data", "DHS 2021", "MDCR80FL"),
-      here("data", "DHS Data", "DHS 2021", "MDFW81FL"),
-      here("data", "DHS Data", "DHS 2021", "MDHR80FL"),
-      here("data", "DHS Data", "DHS 2021", "MDIR80FL"),
-      here("data", "DHS Data", "DHS 2021", "MDKR80FL"),
-      here("data", "DHS Data", "DHS 2021", "MDMR80FL"),
-      here("data", "DHS Data", "DHS 2021", "MDPR80FL")
-    )
+  # Filter the file list to include only flat DHS recode files
+  flat_dhs_files <- stringr::str_subset(file_list, "MD(?:BR|HR|IR|PR|KR|CR|SQ|WI|MR|HW|FW)[0-9]{2}FL$")
+
+  return(flat_dhs_files)
 }

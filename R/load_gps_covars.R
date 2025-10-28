@@ -15,7 +15,7 @@
 #'   skimr::skim()
 load_gps_covars <- function(fpath, factor_vars = c("DHSCLUST", "DHSID", "DHSCC", "GPS_Dataset")) {
   
-  gps_covars <- readr::read_csv(ex_data, na = c("", "NA", "-9999")) %>%
+  gps_covars <- readr::read_csv(fpath, na = c("", "NA", "-9999")) %>%
     dplyr::mutate(dplyr::across(dplyr::all_of(factor_vars), as.factor)) %>%
     dplyr::mutate(dplyr::across(where(is.character), as.factor))
   

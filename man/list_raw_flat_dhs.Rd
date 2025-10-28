@@ -4,11 +4,18 @@
 \alias{list_raw_flat_dhs}
 \title{Title}
 \usage{
-list_raw_flat_dhs()
+list_raw_flat_dhs(file_list)
+}
+\arguments{
+\item{file_list}{Character vector of file paths to check.}
+}
+\value{
+Character vector of flat DHS recode file paths.
 }
 \description{
-Description
+Ingest the list of files in the project and return those that are flat DHS recode files
 }
 \examples{
-list_raw_flat_dhs()
+link_inputs("config.yml") \%>\%
+  list_raw_flat_dhs()
 }

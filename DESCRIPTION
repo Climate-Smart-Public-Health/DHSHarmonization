@@ -16,6 +16,7 @@ Imports:
     purrr,
     rdhs,
     readr,
+    stringr,
     zip
 Suggests: 
     DT,
@@ -26,6 +27,7 @@ Suggests:
     skimr,
     targets,
     testthat,
+    tibble,
     tidyverse
 VignetteBuilder: 
     knitr

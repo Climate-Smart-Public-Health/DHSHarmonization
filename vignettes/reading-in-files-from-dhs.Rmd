@@ -24,7 +24,12 @@ library(DHSHarmonization)
 
 
 Here we demonstrate how to load and view the DHS datasets that will be
-harmonized in this package.
+harmonized in this package. Each section builds the function needed
+to read in the data, and then tests it to ensure it works as expected.
+The functions are then implemented in the targets pipeline.
+
+Some basic EDA is provided for you to help you understand what data
+can be made available to you through a data request.
 ```{r}
 library(targets)
 library(here)
@@ -32,6 +37,7 @@ library(tidyverse)
 library(purrr)
 library(rdhs)
 library(glue)
+library(sf)
 ```
 
 
@@ -220,7 +226,12 @@ the `rhds::rbind_labelled()` function, because they change year over year:
 
 # try to merge all of the BR datasets
 all_br_data <- tar_read(dhs_data_BR, store = here("_targets"))
-rdhs::rbind_labelled(all_br_data) %>% tibble()
+tryCatch({
+  rdhs::rbind_labelled(all_br_data) %>% tibble()
+}, error = function(e) {
+  message("Error merging BR datasets: ", e$message)
+  NULL
+})
 ```
 
 
@@ -383,11 +394,178 @@ plot(st_geometry(gps_data))
 ```
 
 
-I believe that each of these points is the location of a
-survey cluster.
 
-So we can keep the reading function as is, there's not
-much else to add.  
+### What Geospatial Data Do we have?
+
+Let's do some simple EDA of the geospatial data to understand what we have.
+
+From the manual:
+
+> In most recent DHS surveys, the groupings of households that participated in the survey, known as clusters, are geo referenced.  These survey cluster coordinates are collected in the field using GPS receivers, usually during the survey sample listing process. In general, the GPS readings for most clusters are accurate to less than 15 meters.
+
+So a DHS cluster is a group of households surveyed at a given location.
+
+We have the following number of years of GPS surveys:
+```{r}
+gps_data <- tar_read(gps_data, store = here("_targets"))
+length(gps_data)
+```
+
+
+This tells us how many unique clusters (features, in the sf df) we have across each year:
+```{r}
+map(
+  gps_data,
+  ~ .x %>%
+    select(DHSID, DHSYEAR) %>%
+    distinct()
+)
+```
+
+
+There's a weird data point in the data that is far outside of Madagascar.
+
+Let's remove this:
+```{r}
+map(
+  gps_data,
+  ~ .x %>%
+    select(LATNUM, LONGNUM) %>%
+    summary()
+)
+```
+
+
+The data point at 0-0 is clearly an error. Let's remove any
+points with latitudes or longitudes equal to 0.
+```{r}
+gps_data2 <- map(
+  gps_data,
+  ~ .x %>%
+    filter(LATNUM != 0 & LONGNUM != 0)
+)
+```
+
+
+Now, what is the overlap of our clusters with our Madagascar healthsheds? To do this, we will
+perform a spatial join between the GPS points and the healthshed polygons.
+
+Fetching our healthsheds:
+```{r}
+healthsheds <- st_read(here("sandbox", "mdg_healthsheds2022", "healthsheds2022.shp"))
+```
+
+
+Ensure both datasets use the same coordinate reference system (CRS):
+```{r}
+map(
+  gps_data2,
+  ~ st_crs(.x)
+)
+```
+
+
+```{r}
+st_crs(healthsheds) == st_crs(gps_data2[[1]])
+```
+
+
+Here's what the healthsheds look like:
+```{r}
+ggplot(healthsheds) +
+  geom_sf(aes(fill = fs_pop))
+```
+
+
+What we want to know: Our healthsheds represent areas of healthcare access.
+Any analysis that we want to think about should be done with respect to these
+areas, so that we can know how different variables relate to "healthcare access".
+
+So, we want to know how many survey clusters fall within each healthshed. To do this,
+we should do a spatial join between the GPS points and the healthshed polygons, where the
+goal is to know how many GPS points fall within each healthshed.
+
+At first, this may not look to be very successful because the surveys are relatively sparse:
+```{r}
+bind_rows(gps_data2) %>%
+  ggplot() +
+  geom_sf() +
+  facet_grid(~ DHSYEAR)
+```
+
+
+So we need to figure out the degree of overlap between the GPS points and the healthsheds.
+```{r}
+# Spatial join: assign each GPS point to a healthshed polygon
+# st_intersects means we are looking for points in the DHS that overlap on the healthshed polygons
+pts <- gps_data2[[1]]
+joined <- st_join(healthsheds, pts, left = TRUE, join = st_intersects)
+```
+
+
+```{r}
+joined %>%
+  st_drop_geometry() %>% 
+  group_by(fs_uid, fs_name) %>%
+  # how many DHSIDs are in each fs_uid
+  summarise(n_points = n_distinct(DHSID, na.rm = TRUE), .groups = "drop") -> summary_counts
+
+DT::datatable(summary_counts)
+```
+
+
+Most of the healthsheds have zero GPS points overlapping them, but at most there are 11.
+Let's visualize these for one year:
+```{r}
+summary_counts %>%
+  left_join(healthsheds, ., by = c("fs_uid", "fs_name")) %>%
+  ggplot() +
+  geom_sf(aes(fill = n_points)) +
+  scale_fill_viridis_c(option = "plasma", na.value = "grey90") +
+  theme_minimal() +
+  labs(fill = "# GPS points")
+```
+
+
+With the same strategy, we can plot all of the years:
+```{r}
+map(
+  gps_data2,
+  function(x) {
+    year <- unique(x$DHSYEAR)
+    pts <- x
+    joined <- st_join(pts, healthsheds, left = FALSE)
+    summary_counts <- joined %>% 
+      st_drop_geometry() %>%
+      group_by(fs_uid, fs_name) %>% 
+      summarise(n_points = n(), .groups = "drop") %>%
+      mutate(DHSYEAR = year)
+
+    return(summary_counts)
+
+  }
+) %>%
+  list_rbind() %>%
+  left_join(healthsheds, ., by = c("fs_uid", "fs_name")) %>%
+  ggplot() +
+  geom_sf(aes(fill = n_points)) +
+  scale_fill_viridis_c(option = "plasma", na.value = "grey90") +
+  theme_minimal() +
+  labs(fill = "# GPS points") +
+  facet_wrap(DHSYEAR ~ ., nrow=2)
+```
+
+
+You may notice that the join created more rows than the original healthsheds. This
+is because healthsheds are not mutually exclusive (topologically disjoint) and have some overlap:
+```{r}
+# st_intersects shows indeces of healthsheds with overlaps; the fact that
+# some have lengths > 1 indicates overlap
+lengths(st_intersects(healthsheds))
+```
+
+
+This is important to note for future analyses.
 
 ## load_gps_covars
 
@@ -437,7 +615,34 @@ load_gps_covars(ex_data) %>%
 ```
 
   
-  
-That being known, we can set one function to read all of our
-different types of DHS data and merge them:
+
+So what covariate data do we have?
+```{r}
+gps_covar_data <- tar_read(gps_covar_data, store = here("_targets"))
+```
+
+
+GPS covars cover the following number of years:
+```{r}
+length(gps_covar_data)
+```
+
+
+This is fairly easy to summarize:
+```{r}
+list_rbind(gps_covar_data) %>%
+  group_by(DHSYEAR) %>%
+  skimr::skim()
+```
+
+
+## Conclusion
+
+The DHS harmonization package provides methods to read in flat DHS data files,
+GPS data files, and GPS covariate files. These functions are used to provide
+an initial targets pipeline that reads in all of the relevant data for Madagascar DHS surveys.
+
+To get a harmonized dataset, reach out to Tinashe on Github and provide a data request,
+and we can work on harmonizing the datasets for your use case. The harmonized dataset will
+be made available through a targets endpoint in the package that you can load into your R session.
 

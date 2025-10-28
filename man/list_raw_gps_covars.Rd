@@ -4,11 +4,12 @@
 \alias{list_raw_gps_covars}
 \title{Title}
 \usage{
-list_raw_gps_covars()
+list_raw_gps_covars(file_list)
 }
 \description{
 Description
 }
 \examples{
-list_raw_gps_covars()
+link_inputs("config.yml") \%>\%
+  list_raw_gps_covars()
 }

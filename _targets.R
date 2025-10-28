@@ -71,29 +71,21 @@ list(
   tar_target(
     name = raw_data_ready,
     command = link_inputs(cfg_path = cfg),
-    error = "stop"
-    # format = "qs" # Efficient storage for general data objects.
+    error = "stop",
+    format = "file" # Efficient storage for general data objects.
   ),
   # 2) Acknowledge file groups (return character vectors; DO NOT use format="file")
   tar_target(
     raw_flat_dhs_files,
-    { if (!raw_data_ready) stop("raw_data_ready is FALSE"); list_raw_flat_dhs() },
-    format = "file"
+    list_raw_flat_dhs(raw_data_ready)
   ),
   tar_target(
     raw_gps_dhs_files,
-    { if (!raw_data_ready) stop("raw_data_ready is FALSE"); list_raw_gps_dhs() },
-    format = "file"
+    list_raw_gps_dhs(raw_data_ready)
   ),
   tar_target(
     raw_gps_covar_files,
-    { if (!raw_data_ready) stop("raw_data_ready is FALSE"); list_raw_gps_covars() },
-    format = "file"
-  ),
-  tar_target(
-    raw_flat_mis_files,
-    { if (!raw_data_ready) stop("raw_data_ready is FALSE"); list_raw_flat_mis() },
-    format = "file"
+    list_raw_gps_covars(raw_data_ready)
   ),
   # 2) For each recode type, create its own pair of targets
   tar_map(
@@ -104,13 +96,11 @@ list(
     tar_target(
       files_for_type,
       {
-        if(!raw_data_ready) stop("raw_data_ready is FALSE, cannot proceed")
-        raw_flat_dhs_files
         stringr::str_subset(raw_flat_dhs_files, paste0("MD", type))
       }
     ),
 
-    # Read/merge all files for this type in one target
+  #   # Read/merge all files for this type in one target
     tar_target(
       dhs_data,
       load_flat_dhs_data(files_for_type),
@@ -125,6 +115,11 @@ list(
     },
     pattern = map(raw_gps_dhs_files),
     iteration = "list"
+  ),
+  tar_target(
+    gps_covar_data,
+    load_gps_covars(raw_gps_covar_files),
+    pattern = map(raw_gps_covar_files),
+    iteration = "list"
   )
-
 )

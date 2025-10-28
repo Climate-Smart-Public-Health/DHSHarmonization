@@ -3,7 +3,6 @@
 export("%>%")
 export(link_inputs)
 export(list_raw_flat_dhs)
-export(list_raw_flat_mis)
 export(list_raw_gps_covars)
 export(list_raw_gps_dhs)
 export(load_flat_dhs_data)

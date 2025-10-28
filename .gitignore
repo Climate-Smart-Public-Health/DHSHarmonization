@@ -8,3 +8,5 @@ inst/doc
 data/
 sandbox/
 _targets/
+
+/.quarto/

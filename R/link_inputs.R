@@ -28,6 +28,7 @@ link_inputs <- function(cfg_path) {
     stop(paste0("The provided gdrive_path does not exist: ", gdrive_path))
   }
 
+  # this is what makes the pipeline portable across systems
   local_data_dir <- here::here("data")
   if (!dir.exists(local_data_dir)) {
     dir.create(local_data_dir)
@@ -38,8 +39,13 @@ link_inputs <- function(cfg_path) {
 
   if (dir.exists(file.path(local_data_dir, basename(gdrive_path)))) {
     message("Linking successful!")
-    return(TRUE)
   } else {
     stop("Linking failed!")
   }  
+
+  # return the full file tree of the linked data directory with full paths
+  files <- list.files(local_data_dir, recursive = TRUE, full.names = TRUE, include.dirs = TRUE)
+
+  files
+
 }

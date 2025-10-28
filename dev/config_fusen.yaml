@@ -4,7 +4,6 @@ flat_linking_inputs.Rmd:
   R:
   - R/link_inputs.R
   - R/list_raw_flat_dhs.R
-  - R/list_raw_flat_mis.R
   - R/list_raw_gps_covars.R
   - R/list_raw_gps_dhs.R
   tests:
@@ -12,7 +11,6 @@ flat_linking_inputs.Rmd:
   - tests/testthat/test-list_raw_gps_dhs.R
   - tests/testthat/test-list_raw_flat_dhs.R
   - tests/testthat/test-list_raw_gps_covars.R
-  - tests/testthat/test-list_raw_flat_mis.R
   vignettes: vignettes/linking-and-tracking-raw-inputs.Rmd
   inflate:
     flat_file: dev/flat_linking_inputs.Rmd

@@ -2,24 +2,20 @@
 
 #' Title
 #' 
-#' Description
+#' Ingest the list of files in the project and return those that are GPS DHS files
 #' 
-#' 
-#' @return
-#' 
+#' @param file_list Character vector of file paths to check.
+#'
+#' @return Character vector of GPS DHS file paths.
 #' @importFrom here here
 #' @export
 #' @examples
-#' list_raw_gps_dhs()
-list_raw_gps_dhs <- function(){
-    
-    c(
-      here("data", "DHS Data", "DHS 1997", "GPS Data", "MDGE32FL", "MDGE32FL.shp"),
-      here("data", "DHS Data", "DHS 2008 geospatial", "MDGE53FL", "MDGE53FL.shp"),
-      here("data", "DHS Data", "DHS 2008-09", "GPS Data", "MDGE53FL", "MDGE53FL.shp"),
-      here("data", "DHS Data", "DHS 2021", "GPS data", "MDGE81FL", "MDGE81FL.shp"),
-      here("data", "DHS Data", "MIS 2011", "GPS Data", "MDGE61FL", "MDGE61FL.shp"),
-      here("data", "DHS Data", "MIS 2013", "GPS Data", "MDGE6AFL", "MDGE6AFL.shp"),
-      here("data", "DHS Data", "MIS 2016", "GPS Data", "MDGE71FL", "MDGE71FL.shp")
-    )
+#' link_inputs("config.yml") %>%
+#'   list_raw_gps_dhs()
+list_raw_gps_dhs <- function(file_list){
+
+  # Filter the file list to include only GPS DHS files
+  gps_files <- stringr::str_subset(file_list, "MDGE[0-9]{2}FL.shp$")
+
+  return(gps_files)
 }

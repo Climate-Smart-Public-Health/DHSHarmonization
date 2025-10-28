@@ -23,6 +23,14 @@ library(DHSHarmonization)
 
 
 
+```{r}
+library(here)
+library(tibble)
+library(dplyr)
+library(DT)
+```
+
+
 # link_inputs
 
 
@@ -34,21 +42,30 @@ link_inputs("config.yml")
 
 
 # list_raw_gps_dhs
+
+Our DHS data contains GPS files for certain survey years. This function catalogs and fetches the paths to those files.
+We recognize that the GPS files follow a specific naming pattern, typically starting with "MDGE" followed by the survey year and ending with "FL.shp".
     
   
   
 ```{r example-list_raw_gps}
-list_raw_gps_dhs()
+link_inputs("config.yml") %>%
+  list_raw_gps_dhs()
 ```
 
   
   
 # list_raw_flat_dhs
+
+The flat DHS recode files we have in our data repository are cataloged and fetched by this function.
+This is the bulk of the DHS data we have, spanning multiple survey years and recode types.
+This function returns a character vector of file paths to the flat DHS recode files.
     
   
   
 ```{r example-list_raw_flat_dhs}
-list_raw_flat_dhs()
+link_inputs("config.yml") %>%
+  list_raw_flat_dhs()
 ```
 
   
@@ -79,24 +96,15 @@ datatable(survey_summary)
 
 # list_raw_gps_covars
 
-This catalogs and fetches the paths to the covariate files
+This catalogs and fetches the paths to the covariate files for GPS data.
     
   
   
 ```{r example-list_raw_gps_covars}
-list_raw_gps_covars()
+link_inputs("config.yml") %>%
+  list_raw_gps_covars()
 ```
 
   
 
-# list_raw_flat_mis
-    
-  
-  
-```{r example-list_raw_flat_mis}
-list_raw_flat_mis()
-```
-
-  
-  
 

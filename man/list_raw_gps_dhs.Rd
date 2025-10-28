@@ -4,11 +4,18 @@
 \alias{list_raw_gps_dhs}
 \title{Title}
 \usage{
-list_raw_gps_dhs()
+list_raw_gps_dhs(file_list)
+}
+\arguments{
+\item{file_list}{Character vector of file paths to check.}
+}
+\value{
+Character vector of GPS DHS file paths.
 }
 \description{
-Description
+Ingest the list of files in the project and return those that are GPS DHS files
 }
 \examples{
-list_raw_gps_dhs()
+link_inputs("config.yml") \%>\%
+  list_raw_gps_dhs()
 }

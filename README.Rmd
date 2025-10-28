@@ -24,6 +24,10 @@ for analysis. The pipeline is built on targets to ensure reproducibility and
 is designed to be flexible to accommodate different research questions
 and datasets.
 
+To get an understanding of the data, investigate the vignettes in the Articles section,
+which contain detailed explanations of the data loading and harmonization process,
+and some minimal exploratory data analysis (EDA) to help you understand the variables available.
+
 If you require a pipeline endpoint dataset that is not currently implemented,
 please open an issue or reach out to Tinashe. 
 
@@ -42,6 +46,9 @@ through FASRC and the Golden Lab space on FASRC.
 
 ## Example
 
+> Important: This is a work in progress; please make a data request on Github
+first before running the pipeline locally.
+
 Once you've installed the package, you can run the pipeline
 with targets::tar_make()
 
@@ -55,3 +62,10 @@ in the package.
 
 See the Articles section for vignettes that provide detailed walkthroughs
 of pipeline development and target components.
+
+## Pipeline
+
+```{r}
+library(targets)
+tar_mermaid()
+```

@@ -9,17 +9,10 @@
 #' @importFrom here here
 #' @export
 #' @examples
-#' list_raw_gps_covars()
-list_raw_gps_covars <- function(){
+#' link_inputs("config.yml") %>%
+#'   list_raw_gps_covars()
+list_raw_gps_covars <- function(file_list){
     
-    c(
-      here("data", "DHS Data", "DHS 1997", "GPS Data", "MDGC32FL"),
-      here("data", "DHS Data", "DHS 2008 geospatial", "MDGC52FL"),
-      here("data", "DHS Data", "DHS 2008-09", "GPS Data", "MDGC52FL"),
-      here("data", "DHS Data", "DHS 2021", "GPS data", "MDGC81FL"),
-      here("data", "DHS Data", "MIS 2011", "GPS Data", "MDGC62FL"),
-      here("data", "DHS Data", "MIS 2013", "GPS Data", "MDGC6BFL"),
-      here("data", "DHS Data", "MIS 2016", "GPS Data", "MDGC72FL")
-    ) %>%
-      list.files(pattern = "*.csv", full.names = TRUE, recursive = TRUE)
+    gps_covars <- stringr::str_subset(file_list, "MDGC[0-9]{2}FL.csv$")
+    return(gps_covars)
 }

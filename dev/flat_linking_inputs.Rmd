@@ -17,6 +17,13 @@ library(tibble)
 library(DT)
 ```
 
+```{r}
+library(here)
+library(tibble)
+library(dplyr)
+library(DT)
+```
+
 # link_inputs
 
 ```{r development-link_inputs}
@@ -51,6 +58,7 @@ link_inputs <- function(cfg_path) {
     stop(paste0("The provided gdrive_path does not exist: ", gdrive_path))
   }
 
+  # this is what makes the pipeline portable across systems
   local_data_dir <- here::here("data")
   if (!dir.exists(local_data_dir)) {
     dir.create(local_data_dir)
@@ -61,10 +69,15 @@ link_inputs <- function(cfg_path) {
 
   if (dir.exists(file.path(local_data_dir, basename(gdrive_path)))) {
     message("Linking successful!")
-    return(TRUE)
   } else {
     stop("Linking failed!")
   }  
+
+  # return the full file tree of the linked data directory with full paths
+  files <- list.files(local_data_dir, recursive = TRUE, full.names = TRUE, include.dirs = TRUE)
+
+  files
+
 }
 ```
 
@@ -80,6 +93,9 @@ test_that("link_inputs works", {
 
 
 # list_raw_gps_dhs
+
+Our DHS data contains GPS files for certain survey years. This function catalogs and fetches the paths to those files.
+We recognize that the GPS files follow a specific naming pattern, typically starting with "MDGE" followed by the survey year and ending with "FL.shp".
     
 ```{r development-list_raw_gps_dhs}
 # You can prepare the code of the list_raw_gps() function here
@@ -88,29 +104,25 @@ test_that("link_inputs works", {
 ```{r function-list_raw_gps_dhs}
 #' Title
 #' 
-#' Description
+#' Ingest the list of files in the project and return those that are GPS DHS files
 #' 
-#' 
-#' @return
-#' 
+#' @param file_list Character vector of file paths to check.
+#'
+#' @return Character vector of GPS DHS file paths.
 #' @importFrom here here
 #' @export
-list_raw_gps_dhs <- function(){
-    
-    c(
-      here("data", "DHS Data", "DHS 1997", "GPS Data", "MDGE32FL", "MDGE32FL.shp"),
-      here("data", "DHS Data", "DHS 2008 geospatial", "MDGE53FL", "MDGE53FL.shp"),
-      here("data", "DHS Data", "DHS 2008-09", "GPS Data", "MDGE53FL", "MDGE53FL.shp"),
-      here("data", "DHS Data", "DHS 2021", "GPS data", "MDGE81FL", "MDGE81FL.shp"),
-      here("data", "DHS Data", "MIS 2011", "GPS Data", "MDGE61FL", "MDGE61FL.shp"),
-      here("data", "DHS Data", "MIS 2013", "GPS Data", "MDGE6AFL", "MDGE6AFL.shp"),
-      here("data", "DHS Data", "MIS 2016", "GPS Data", "MDGE71FL", "MDGE71FL.shp")
-    )
+list_raw_gps_dhs <- function(file_list){
+
+  # Filter the file list to include only GPS DHS files
+  gps_files <- stringr::str_subset(file_list, "MDGE[0-9]{2}FL.shp$")
+
+  return(gps_files)
 }
 ```
   
 ```{r example-list_raw_gps}
-list_raw_gps_dhs()
+link_inputs("config.yml") %>%
+  list_raw_gps_dhs()
 ```
   
 ```{r tests-list_raw_gps_dhs}
@@ -120,6 +132,10 @@ test_that("list_raw_gps_dhs works", {
 ```
   
 # list_raw_flat_dhs
+
+The flat DHS recode files we have in our data repository are cataloged and fetched by this function.
+This is the bulk of the DHS data we have, spanning multiple survey years and recode types.
+This function returns a character vector of file paths to the flat DHS recode files.
     
 ```{r development-list_raw_flat_dhs}
 # You can prepare the code of the list_raw_flat_dhs() function here
@@ -128,63 +144,23 @@ test_that("list_raw_gps_dhs works", {
 ```{r function-list_raw_flat_dhs}
 #' Title
 #' 
-#' Description
+#' Ingest the list of files in the project and return those that are flat DHS recode files
 #' 
-#' @return
-#' 
+#' @param file_list Character vector of file paths to check.
+#' @return Character vector of flat DHS recode file paths.
 #' @export
-list_raw_flat_dhs <- function(){
+list_raw_flat_dhs <- function(file_list){
     
-    c(
-      # 92
-      here("data", "DHS Data", "DHS 1992", "MDBR21FL"),
-      here("data", "DHS Data", "DHS 1992", "MDHR21FL"),
-      here("data", "DHS Data", "DHS 1992", "MDHW21FL"),
-      here("data", "DHS Data", "DHS 1992", "MDIR21FL"),
-      here("data", "DHS Data", "DHS 1992", "MDKR21FL"),
-      here("data", "DHS Data", "DHS 1992", "MDPR21FL"),
-      here("data", "DHS Data", "DHS 1992", "MDSQ21FL"),
-      # 97
-      here("data", "DHS Data", "DHS 1997", "MDBR31FL"),
-      here("data", "DHS Data", "DHS 1997", "MDHR31FL"),
-      here("data", "DHS Data", "DHS 1997", "MDHW31FL"),
-      here("data", "DHS Data", "DHS 1997", "MDIR31FL"),
-      here("data", "DHS Data", "DHS 1997", "MDKR31FL"),
-      here("data", "DHS Data", "DHS 1997", "MDPR31FL"),
-      here("data", "DHS Data", "DHS 1997", "MDWI31FL"),
-      # 03-04
-      here("data", "DHS Data", "DHS 2003-04", "MDBR42FL"),
-      here("data", "DHS Data", "DHS 2003-04", "MDCR42FL"),
-      here("data", "DHS Data", "DHS 2003-04", "MDHR42FL"),
-      here("data", "DHS Data", "DHS 2003-04", "MDHW41FL"),
-      here("data", "DHS Data", "DHS 2003-04", "MDIR42FL"),
-      here("data", "DHS Data", "DHS 2003-04", "MDKR42FL"),
-      here("data", "DHS Data", "DHS 2003-04", "MDMR42FL"),
-      here("data", "DHS Data", "DHS 2003-04", "MDPR42FL"),
-      # 08
-      #here("data", "DHS Data", "DHS 2008 geospatial", "MDHR51DT"), # this may fail
-      here("data", "DHS Data", "DHS 2008-09", "MDBR51FL"),
-      here("data", "DHS Data", "DHS 2008-09", "MDCR51FL"),
-      here("data", "DHS Data", "DHS 2008-09", "MDHR51FL"),
-      here("data", "DHS Data", "DHS 2008-09", "MDIR51FL"),
-      here("data", "DHS Data", "DHS 2008-09", "MDKR51FL"),
-      here("data", "DHS Data", "DHS 2008-09", "MDMR51FL"),
-      here("data", "DHS Data", "DHS 2008-09", "MDPR51FL"),
-      # 21
-      here("data", "DHS Data", "DHS 2021", "MDBR80FL"),
-      here("data", "DHS Data", "DHS 2021", "MDCR80FL"),
-      here("data", "DHS Data", "DHS 2021", "MDFW81FL"),
-      here("data", "DHS Data", "DHS 2021", "MDHR80FL"),
-      here("data", "DHS Data", "DHS 2021", "MDIR80FL"),
-      here("data", "DHS Data", "DHS 2021", "MDKR80FL"),
-      here("data", "DHS Data", "DHS 2021", "MDMR80FL"),
-      here("data", "DHS Data", "DHS 2021", "MDPR80FL")
-    )
+  # Filter the file list to include only flat DHS recode files
+  flat_dhs_files <- stringr::str_subset(file_list, "MD(?:BR|HR|IR|PR|KR|CR|SQ|WI|MR|HW|FW)[0-9]{2}FL$")
+
+  return(flat_dhs_files)
 }
 ```
   
 ```{r example-list_raw_flat_dhs}
-list_raw_flat_dhs()
+link_inputs("config.yml") %>%
+  list_raw_flat_dhs()
 ```
   
 ```{r tests-list_raw_flat_dhs}
@@ -219,7 +195,7 @@ datatable(survey_summary)
 
 # list_raw_gps_covars
 
-This catalogs and fetches the paths to the covariate files
+This catalogs and fetches the paths to the covariate files for GPS data.
     
 ```{r development-list_raw_gps_covars}
 # You can prepare the code of the list_raw_gps_covars() function here
@@ -234,23 +210,16 @@ This catalogs and fetches the paths to the covariate files
 #' @importFrom purrr map_chr
 #' @importFrom here here
 #' @export
-list_raw_gps_covars <- function(){
+list_raw_gps_covars <- function(file_list){
     
-    c(
-      here("data", "DHS Data", "DHS 1997", "GPS Data", "MDGC32FL"),
-      here("data", "DHS Data", "DHS 2008 geospatial", "MDGC52FL"),
-      here("data", "DHS Data", "DHS 2008-09", "GPS Data", "MDGC52FL"),
-      here("data", "DHS Data", "DHS 2021", "GPS data", "MDGC81FL"),
-      here("data", "DHS Data", "MIS 2011", "GPS Data", "MDGC62FL"),
-      here("data", "DHS Data", "MIS 2013", "GPS Data", "MDGC6BFL"),
-      here("data", "DHS Data", "MIS 2016", "GPS Data", "MDGC72FL")
-    ) %>%
-      list.files(pattern = "*.csv", full.names = TRUE, recursive = TRUE)
+    gps_covars <- stringr::str_subset(file_list, "MDGC[0-9]{2}FL.csv$")
+    return(gps_covars)
 }
 ```
   
 ```{r example-list_raw_gps_covars}
-list_raw_gps_covars()
+link_inputs("config.yml") %>%
+  list_raw_gps_covars()
 ```
   
 ```{r tests-list_raw_gps_covars}
@@ -258,53 +227,6 @@ test_that("list_raw_gps_covars works", {
   expect_true(inherits(list_raw_gps_covars, "function")) 
 })
 ```
-
-# list_raw_flat_mis
-    
-```{r development-list_raw_flat_mis}
-# You can prepare the code of the list_raw_flat_mis() function here
-```
-  
-```{r function-list_raw_flat_mis}
-#' Title
-#' 
-#' Description
-#' 
-#' @return
-#' 
-#' @export
-list_raw_flat_mis <- function(){
-    
-    c(
-      # 2011
-      here("data", "DHS Data", "MIS 2011", "MDHR61FL"),
-      here("data", "DHS Data", "MIS 2011", "MDIR61FL"),
-      here("data", "DHS Data", "MIS 2011", "MDKR61FL"),
-      here("data", "DHS Data", "MIS 2011", "MDPR61FL"),
-      # 2013
-      here("data", "DHS Data", "MIS 2013", "MDHR6AFL"),
-      here("data", "DHS Data", "MIS 2013", "MDIR6AFL"),
-      here("data", "DHS Data", "MIS 2013", "MDKR6AFL"),
-      here("data", "DHS Data", "MIS 2013", "MDPR6AFL"),
-      # 2016
-      here("data", "DHS Data", "MIS 2016", "MDHR71FL"),
-      here("data", "DHS Data", "MIS 2016", "MDIR71FL"),
-      here("data", "DHS Data", "MIS 2016", "MDKR71FL"),
-      here("data", "DHS Data", "MIS 2016", "MDPR71FL")
-    )
-}
-```
-  
-```{r example-list_raw_flat_mis}
-list_raw_flat_mis()
-```
-  
-```{r tests-list_raw_flat_mis}
-test_that("list_raw_flat_mis works", {
-  expect_true(inherits(list_raw_flat_mis, "function")) 
-})
-```
-  
 
 ```{r development-inflate, eval=FALSE}
 # Run but keep eval=FALSE to avoid infinite loop
